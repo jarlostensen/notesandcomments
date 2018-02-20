@@ -64,7 +64,7 @@ Let's dive straight in and take measurements of the shortest interval (i.e. accu
     }
 ```
 
-A run of the above on an i5-7500K @ 4.2 GHz yields the following results
+A run of the above on an i5-7600K @ 4.2 GHz yields the following results
 
 ```
 Debug build
