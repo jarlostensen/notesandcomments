@@ -80,8 +80,7 @@ mean; qcp: 30.9291, chrono: 309.285
 stddev; qcp: 0, chrono: 0.452857
 ```
 
-!!! note 
-    runs on other hardware give the same results for QCP, and the same degree of variation for `std::chrono`
+*NOTE: runs on other hardware give the same results for QCP, and the same degree of variation for `std::chrono`*
 
 Notice in particular the large discrepancy between Debug and Release builds for `std::chrono`, a discrepancy which is practically absent when using QCP.
 Also note the exact correspondence between the smallest measurable interval for QCP, `ticksToNs`, and the measurements we get in the loop. The optimised (and debug) versions of the loop both execute so fast that QCP is unable to resolve it and consequently always returns a value of 1 tick.
