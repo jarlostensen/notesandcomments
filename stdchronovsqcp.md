@@ -1,11 +1,11 @@
 ### A word about std::chrono::high_resolution_clock on Windows
-In VisualStudio `std::chrono::high_resolution_clock` has since version 2015 been implemented using QCP [bug 719443](https://web.archive.org/web/20141212192132/https://connect.microsoft.com/VisualStudio/feedback/details/719443/).
+In VisualStudio `std::chrono::high_resolution_clock` has since version 2015 been implemented using QCP [bug 719443](https://web.archive.org/web/20141212192132/https://connect.microsoft.com/VisualStudio/feedback/details/719443/). See also [Acquiring high-resolution time stamps](https://msdn.microsoft.com/en-us/library/windows/desktop/dn553408(v=vs.85).aspx).
 Some of the key benefits of using `std::chrono` are obviously portatbility across platforms, and not having to write and maintain the code. 
 However, there are some issues with using `std::chrono` for accurate timing that we need to be aware of.
 
 Firstly, it obviously has some overhead above and beyond direct use of QCP, and this overhead is dependent on how well your compiler has optimised the code since it is brought in as a template header, i.e. not as a binary. A debug build and a release build will therefore yield significantly different timing results if you use `std::chrono`, as opposed to using QCP directly. 
 
-Secondly it reports its accuracy in a way which is, strictly speaking, incorrect. Whereas QCP's accuracy is variable according to your HW, `std::chrono` always reports nanosecon accuracy, i.e. `std::chrono::high_resolution_clock::period`. However, since it's implemented using QCP (on Windows) it obviously can't be more accurate than it is, and a nanosecond resolution is therefore incorrect. Arguably it should return the same value for its resolution as the underlying implementation, but that's a debate for the standards comittee.
+Secondly it reports its accuracy in a way which is, strictly speaking, incorrect. Whereas QCP's accuracy is variable according to your HW, `std::chrono` always reports nanosecond accuracy, i.e. `std::chrono::high_resolution_clock::period`. However, since it's implemented using QCP (on Windows) it obviously can't be more accurate than it is, and a nanosecond resolution is therefore incorrect. Arguably it should return the same value for its resolution as the underlying implementation, but that's a debate for the standards committee.
 
 Let's dive straight in and take measurements of the shortest interval (i.e. accuracy) of both `std::chrono` and QCP, to see what these two things mean in practice;
 
