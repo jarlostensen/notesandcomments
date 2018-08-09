@@ -33,7 +33,7 @@ When you now start the VM the pipe will be created and this is where you will ul
 But, first, in your VM guest session; launch a ```cmd``` shell as administrator and set up the kernel debugging options;
 
 - ```bcdedit /debug on```
-- ```serial debugport:1 baudrate:115200```
+- ```bcdedit /dbgsettings serial debugport:1 baudrate:115200```
 
 At this point you should restart the VM. This will create the named pipe, connected to COM1 in the guest Windows session.
 
