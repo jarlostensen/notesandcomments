@@ -37,6 +37,7 @@ But, first, in your VM guest session; launch a ```cmd``` shell as administrator 
 At this point you should restart the VM. This will create the named pipe, connected to COM1 in the guest Windows session.
 
 Now all that is left is to connect with WinDbg from the host;
+
 ```Windbg -b -k com:pipe,port=\.\pipe\windebugpipe,resets=0,reconnect```
 
 This will bring up a window saying "waiting to connect", and you now have to restart the VM session. Once it boots the debugger will connect (assuming everything is working) and you'll be able to break into the Windows kernel and start snooping around.
