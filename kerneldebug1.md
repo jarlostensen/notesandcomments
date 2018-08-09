@@ -27,6 +27,7 @@ Set up a Serial port as follows;
 - Path/Address: ```\\.\pipe\<WHATEVERYOULIKE>```
 - Do *not* tick ```Connect to existing pipe/socket```
 
+(WHATEVERYOULIKE is just that; whatever you want to call it, as long as you remember it for when you need it later...)
 When you now start the VM the pipe will be created and this is where you will ultimately connect WinDbg. 
 
 But, first, in your VM guest session; launch a ```cmd``` shell as administrator and set up the kernel debugging options;
@@ -38,7 +39,7 @@ At this point you should restart the VM. This will create the named pipe, connec
 
 Now all that is left is to connect with WinDbg from the host;
 
-```Windbg -b -k com:pipe,port=\.\pipe\windebugpipe,resets=0,reconnect```
+```Windbg -b -k com:pipe,port=\.\pipe\<WHATEVERYOULIKE>,resets=0,reconnect```
 
 This will bring up a window saying "waiting to connect", and you now have to restart the VM session. Once it boots the debugger will connect (assuming everything is working) and you'll be able to break into the Windows kernel and start snooping around.
 
