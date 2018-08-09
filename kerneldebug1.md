@@ -1,7 +1,7 @@
 # Kernel Debugging of a Windows 2012 R2 (or 8.1) guest on VirtualBox, from a Windows 10 Host
 ## TL;DR
 This is a post detailing how to set up VirtualBox (version 5.2)  running on Windows 10, to do kernel debugging of Windows 2012 (or 8.1), using WinDbg.
-It is very specific because all things kernel related are, I can not make *any* promises about any of this working with other versions of any of the components mentioned wortwith.
+It is very specific because all things kernel related are, I can not make *any* promises about any of this working with other versions of any of the components mentioned forthwith.
 
 ## Required Pieces
 - VirtualBox 
