@@ -90,7 +90,7 @@ Build the solution again and run ```ioctlapp.exe```. What do you think will happ
 
 ![Dead as Parrot](assets/crash.PNG)
 
-At this point my target Windows Server 2012 R2 hangs, hard. Nothing moves, nothing responds. We're dead. You might even have to force quite the VM.
+At this point my target Windows Server 2012 R2 hangs, hard. Nothing moves, nothing responds. We're dead. You might even have to force quite the VM. [Dead as Parrot](https://www.youtube.com/watch?v=4vuW6tQ0218)
 
 ### Debug it
 Fire up WinDbg and make sure everything is set up for serial debugging, as in my [Kernel Debugging](kerneldebug1.md) post. You need to start the VM normally so that the COM pipe is available.
@@ -106,7 +106,7 @@ Notice that it's actually an ```int 3``` instruction, and looking at the callsta
 ![crash stack](assets/windbgcrashstack.PNG)
 
 The top of the stack, and the location that triggered the ```int 3``` which when unhandled caused our VM to bomb out so completely, is ```DbgBreakPointWithStatus```. 
-
+This in turn was caused by the integrity check of the allocated buffer done in ```ExFreePoolWithTag``` ([MSDN](https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/content/wdm/nf-wdm-exfreepoolwithtag)).
 
 ---
 
