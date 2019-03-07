@@ -10,10 +10,7 @@ https://en.wikipedia.org/wiki/Modular_arithmetic
 
 http://jameskbeard.com/Temple/Data/Binary_Polynomial_Division.pdf
 
-Now, to divide two binary numbers, modulo 2, you use the same technique as “long division” but I’ve not done long division by hand since a ver
-Some finite field arithmetic; a simple Swift implementation
-
-y long time and quite frankly can’t remember much of it so I am not going to use that excuse and instead present you directly with an algorithm, firstly in pseudo-code, then in Swift;
+Now, to divide two binary numbers, modulo 2, you use the same technique as “long division” but I’ve not done long division by hand since a very long time and quite frankly can’t remember much of it so I am not going to use that excuse and instead present you directly with an algorithm, firstly in pseudo-code, then in Swift;
 
 divideBinaryModulo2(N, D) where N>D
  let divisor = msb of D aligned with the msb of N by 
