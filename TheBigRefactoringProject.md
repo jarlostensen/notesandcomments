@@ -1,4 +1,7 @@
 ## The big refactoring project
+
+Notes are being typed as the project progresses...it will converge on something coherent, soon.
+
 ### Lessons learned transforming a deep OO C++ code base
 
 #### TL;DR
