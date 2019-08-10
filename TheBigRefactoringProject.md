@@ -25,7 +25,7 @@ public:
         // this is effectively the "template pattern"
         if (BasePreInitialise())
         {
-            ...
+            // over to you, subclass (or just our stub which always succeeds)
             if( OnInitialise() )
             {
               ...
@@ -90,5 +90,16 @@ However, this bliss is short lived.
 We foresaw some of the challenges around reasoning about this type of code so we added a lot of documentation including helpful hints like "This OnSomething method gets invoked at location X in the hierarchy, source.cpp:line". What could possibly go wrong when the underlying design is so clean and simple?
 <br/>
 Now there are a lot of fancy words to describe it, like cognitive overload, or context switch cost, but I'll just call a spade by its name and say "it's a mess".
+<br/>
+The problem is the lack of locality in the code. Everything depends on "action at a distance", and a lot of it depends on what happens at runtime. The former simply means that when looking at a piece of code you can't reason completely about it because you don't have all the information you need. Some behaviour is delegated via "On's" or "Do's", which in itself wouldn't be so bad if it wasn't for the fact that you only know *who* will implement them at runtime. Code navigation tools can only suggest where you should look and you often end up firing up the debugger or mentally executing code to determine the exact flow. 
+The use of C++ classes throws up another issue; they are realised as objects with their own state. Of course they are, that's the whole point, but what that means in the highly fragmented "spiderweb" of connections that you often get is that you end up carrying pointers and indirections around to access shared state or functionality.
+<br/>
 
+
+
+
+# In Conclusion
+*Writing good, readable and maintainable, C++ code is HARD*. Refactoring often, questioning your assumptions, often, and remaining pragmatic about what solution you pick for a given job is crucial. Resist the urge to jump straight into a class hierarchy, ask yourself it it *makes sense*, and think about how runtime and static behaviour is mixed. An architecture that only becomes manifest at runtime is *very difficult to reason about*. 
+<br/>
+Stay safe, and good luck.
 
