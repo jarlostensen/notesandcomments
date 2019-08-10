@@ -53,7 +53,9 @@ public:
     
 protected:
     // the implementation provides these which get invoked at runtime
-    virtual bool DoSomething() { return true; }
+    // Do's *must* be implemented
+    virtual bool DoSomething() = 0;
+    // On's are optional
     virtual bool OnInitialise() { return true; }
     virtual void OnInitialiseFailed() {}
     ...
@@ -70,8 +72,23 @@ class ClientImplementation : public ClientBase
 public:
     ...
 protected:
-  bool DoSomething() override;
-  bool OnInitialise() override;
+    bool DoSomething() override;
+    bool OnInitialise() override;
+    // ignoring OnInitialiseFailed, this implementation doesn't care (others might)
 };
 ```
+In the rest of the code we pick a concrete implementation, at runtime, depending on some conditions (for example what flavour of D3D the client rendering engine should be using, or some other conditions), and we hook up the endpoints. We had a lot of experimentation going on with different client implementations and cross platform scenarios at this time as well, so the flexibility was exactly what the doctor ordered. 
+<br/>
+In conclusion; the pattern works well for these types of scenarios, and in C++ it's easy to implement using virtual inheritance. 
+Job done.
+<br/>
+...or is it?
+
+### The wakeup call
+While the code base is managed by one, perhaps two, people, and while you're working on it all the time everything is fine. You know how the logic flows through the code and you can easily jump to that source file where that implementation lives because you have the hierarchy, and the runtime dynamics, in your mind at all times. 
+However, this bliss is short lived. 
+We foresaw some of the challenges around reasoning about this type of code so we added a lot of documentation including helpful hints like "This OnSomething method gets invoked at location X in the hierarchy, source.cpp:line". What could possibly go wrong when the underlying design is so clean and simple?
+<br/>
+Now there are a lot of fancy words to describe it, like cognitive overload, or context switch cost, but I'll just call a spade by its name and say "it's a mess".
+
 
