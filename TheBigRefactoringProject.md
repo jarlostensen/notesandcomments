@@ -10,7 +10,7 @@ We had developed a code base to support a Windows desktop client application. Fu
 of service layers interacting with remote servers and marshalling information to and from the client PC.
 The architecture lent itself readily to a class hierarchy; there was runtime polymorphism and there was layering of responsibilities.
 A lot of functionality was generic and could be shared between multiple concrete implementations and the natural way to build this was 
-to use the [template pattern](https://en.wikipedia.org/wiki/Template_method_pattern).
+to use a variant of the [template pattern](https://en.wikipedia.org/wiki/Template_method_pattern). This pattern allows us to write "scaffolding" code with embedded points of specialisation that we can delegate to a concrete implementation. It differs from a straight method override approach in that the subclass provides *partial* implementations that the base class injects where it needs it.
 
 Code speaks more than a thousand words, so here's a code snippet to illustrate how this was done;
 
@@ -36,7 +36,21 @@ public:
         OnInitialiseFailed();
         return false;
     }
-    bool Something();
+    bool Something()
+    {
+        if(CertainConditionsAreMet())
+        {
+            SetupRequiredBaseState();
+            // this bit needs a concrete implementation
+            if ( DoSomething() )
+            {
+                StateUpdateAndOtherMisc();
+                return true;
+            }
+        }
+        ...
+    }
+    
 protected:
     // the implementation provides these which get invoked at runtime
     virtual bool DoSomething() { return true; }
@@ -46,7 +60,7 @@ protected:
     // subclasses can access base state, anything non-implementation specific
     int GetSomeBaseState() const;
 private:
-    // the innards
+    // these represent the concrete steps that the base class implements, into which subclass implementation is injected
     bool BasePreInitialise();
     bool BasePostInitialise();
 };
