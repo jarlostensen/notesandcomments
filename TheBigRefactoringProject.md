@@ -102,11 +102,20 @@ The result is exactly what you'd expect; people will create shortcuts and connec
 ## A brief summary so far
 We concluded the following after the code had been tried and tested in a real development environment for a while:
 * Runtime polymorphism wasn't really needed; we didn't have implementations being swapped in and out, they were decided on very early on, or even at compile time. I suspect that's more often the case than not.
-* The many paths up and down the virtual inheritance hierarchy made the code flow very hard to understand on first contact. We had organic growth of incoherent patches of code addressing immediate needs as a result.
+* The many paths up and down the virtual inheritance hierarchy made the code flow very hard to understand on first contact. We had organic and incongruent growth of patches of code addressing immediate needs as a result.
 * Classes and data isolation didn't really give us much as we ended up with pointers to objects everywhere. Heavy use of the pimpl idiom that had helped isolate headers from implementation early on started to become a problem, with pimpl X indirectly ending up depending on something in pimpl Y (which is **bad** but people make mistakes.)
 * *BUT*: The template method pattern worked really well because it isolated large amounts of boiler plate and flow control code and avoided copy-and-paste in implementations, ultimately this *lowered* maintenance cost. 
 
 > Keep in mind that this is the story of a real-world implementation in a real-world team with day jobs and a million things to do. You may argue that "don't do it this way from the start" is a solution but more often than not that's not how the world works.
+
+# The remedy
+
+
+## Summary, take II, after the refactor
+* The class hierarchy is completely gone, it is entirely up to the implementation if it wants to use classes for anything.
+* Large portions of code is broken out into a variant of a [service oriented architecture](https://en.wikipedia.org/wiki/Service-oriented_architecture), i.e. presented as self contained, black box, and *stateless* functionality. 
+* An emphasis on locality; instead of setting state somewhere in a class object which is then implicitly assumed by its functionality we explicitly provide the state at the call site when using that functionality. *Oh look, it's C, I hear you say...yes, yes, alright then*.
+* Where template methods would have been implemented using virtual inheritance we use ```std::function```, or just plain function pointers, again emphasising the locality of state and functionality. Furthermore we use C++ lambdas...a lot...and this encourages locality *even more*.
 
 # In Conclusion
 *Writing good, readable and maintainable, C++ code is HARD*. Refactoring often, questioning your assumptions, often, and remaining pragmatic about what solution you pick for a given job is crucial. Resist the urge to jump straight into a class hierarchy, ask yourself it it *makes sense*, and think about how runtime and static behaviour is mixed. An architecture that only becomes manifest at runtime is *very difficult to reason about*. 
