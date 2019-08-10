@@ -92,11 +92,13 @@ We foresaw some of the challenges around reasoning about this type of code so we
 Now there are a lot of fancy words to describe it, like cognitive overload, or context switch cost, but I'll just call a spade by its name and say "it's a mess".
 <br/>
 The problem is the lack of locality in the code. Everything depends on "action at a distance", and a lot of it depends on what happens at runtime. The former simply means that when looking at a piece of code you can't reason completely about it because you don't have all the information you need. Some behaviour is delegated via "On's" or "Do's", which in itself wouldn't be so bad if it wasn't for the fact that you only know *who* will implement them at runtime. Code navigation tools can only suggest where you should look and you often end up firing up the debugger or mentally executing code to determine the exact flow. 
-The use of C++ classes throws up another issue; they are realised as objects with their own state. Of course they are, that's the whole point, but what that means in the highly fragmented "spiderweb" of connections that you often get is that you end up carrying pointers and indirections around to access shared state or functionality.
+The use of C++ classes throws up another issue; they are realised as objects with their own state. Of course they are, that's the whole point, but what that means in the highly fragmented "spiderweb" of connections that you can get is that you end up carrying pointers and indirections around to access shared state or functionality. Keep in mind that this architecture looks very clean on paper, and it's implemented in a few source files and headers. On paper this really shouldn't be a problem, yet it managed to become one for all the reasons mentioned above (and probably some others that I've forgotten about.)
 <br/>
-
-
-
+The worst consequence of all of this is what happens when someone who has never before seen the code needs to get in there and do something about it. Most code is poorly documented (REF NEEDED, but you know what I mean) but even with the best will in the world it's hard to convey *intent* in code comments and despite what some might claim, code does **not** document itself without considerable effort from the reader. To come in cold looking at a narrow area of code which can not be reasoned about without understanding the whole is a daunting task and as our team grew and people took on tasks in unfamiliar areas of code this problem got worse. 
+The result is exactly what you'd expect; people will create shortcuts and connections where there shouldn't be any, or where a connection already exists but is hard to spot. This is where the spider's web starts to grow and you get duplication of state, stray pointers into all corners of the hierarchy, and outright sabotage of separation of concerns. Because, ultimately, people have a job to do.
+<br/>
+> NOTE: in this blog post you will not find a silver bullet for all of the above. You will however find reflections on how to avoid some of the issues mentioned.
+<br/>
 
 # In Conclusion
 *Writing good, readable and maintainable, C++ code is HARD*. Refactoring often, questioning your assumptions, often, and remaining pragmatic about what solution you pick for a given job is crucial. Resist the urge to jump straight into a class hierarchy, ask yourself it it *makes sense*, and think about how runtime and static behaviour is mixed. An architecture that only becomes manifest at runtime is *very difficult to reason about*. 
