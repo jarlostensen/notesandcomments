@@ -98,10 +98,17 @@ The worst consequence of all of this is what happens when someone who has never 
 The result is exactly what you'd expect; people will create shortcuts and connections where there shouldn't be any, or where a connection already exists but is hard to spot. This is where the spider's web starts to grow and you get duplication of state, stray pointers into all corners of the hierarchy, and outright sabotage of separation of concerns. Because, ultimately, people have a job to do.
 <br/>
 > NOTE: in this blog post you will not find a silver bullet for all of the above. You will however find reflections on how to avoid some of the issues mentioned.
-<br/>
+
+## A brief summary so far
+We concluded the following after the code had been tried and tested in a real development environment for a while:
+* Runtime polymorphism wasn't really needed; we didn't have implementations being swapped in and out, they were decided on very early on, or even at compile time. I suspect that's more often the case than not.
+* The many paths up and down the virtual inheritance hierarchy made the code flow very hard to understand on first contact. We had organic growth of incoherent patches of code addressing immediate needs as a result.
+* Classes and data isolation didn't really give us much as we ended up with pointers to objects everywhere. Heavy use of the pimpl idiom that had helped isolate headers from implementation early on started to become a problem, with pimpl X indirectly ending up depending on something in pimpl Y (which is **bad** but people make mistakes.)
+* *BUT*: The template method pattern worked really well because it isolated large amounts of boiler plate and flow control code and avoided copy-and-paste in implementations, ultimately this *lowered* maintenance cost. 
+
+> Keep in mind that this is the story of a real-world implementation in a real-world team with day jobs and a million things to do. You may argue that "don't do it this way from the start" is a solution but more often than not that's not how the world works.
 
 # In Conclusion
 *Writing good, readable and maintainable, C++ code is HARD*. Refactoring often, questioning your assumptions, often, and remaining pragmatic about what solution you pick for a given job is crucial. Resist the urge to jump straight into a class hierarchy, ask yourself it it *makes sense*, and think about how runtime and static behaviour is mixed. An architecture that only becomes manifest at runtime is *very difficult to reason about*. 
 <br/>
 Stay safe, and good luck.
-
