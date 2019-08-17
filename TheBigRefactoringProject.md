@@ -114,11 +114,23 @@ The realisation that runtime polymorphism was uneeded is probably the most impor
 
 Consider the following (contrived) example:
 ```c++
+
+struct SomeSharedStateWeEndedUpWithForReasons
+{
+    ...
+    std::vector<float>  _telemetry_samples;
+    ...
+    void AddSample(float sample);
+};
+...
 class SomeClassWithState
 {
     ...
     int GetValue() const;
     void SetValue(int val);
+    void DoSomethingWithValue();
+    ...
+    SomeSharedStateWeEndedUpWithForReasons* _shared_state;
 };
 ...
 class SomeOtherClass
@@ -131,9 +143,12 @@ class SomeOtherClass
         ...
         that->SetValue(42);
         ...
+        that->DoSomethingWithValue();
+        ...
+        _shared_state->AddSample(aFloatValueWeGenerated);
 };
 ```
-
+<br/>
 > Keep in mind that this is the story of a real-world implementation in a real-world team with day jobs and a million things to do. You may argue that "don't do it this way from the start" is a solution but more often than not that's not how the world works.
 
 ## Summary, take II, after the refactor
