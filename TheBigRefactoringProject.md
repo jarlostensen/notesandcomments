@@ -89,15 +89,21 @@ Job done.
 
 ### The wakeup call
 While the code base is managed by one or two people who are working on it all the time everything is fine. They know how the logic flows in the code and can make the required mental jumps around the architecture and the source with ease. 
-We even foresaw some of the challenges around reasoning about this type of code so we added a lot of documentation including helpful hints like "This OnSomething method gets invoked at location X in the hierarchy, source.cpp:line". What could possibly go wrong when the underlying design is so clean, well documented, and simple?
+We even added a lot of documentation including helpful hints so what could possibly go wrong?
 <br/>
-Now there are a lot of fancy words to describe it, like cognitive overload, or context switch cost, but I'll just call a spade by its name and say "it's a mess".
+
+The problem is the *lack of locality* in the code. Everything depends on "action at a distance", and a lot of it depends on what happens at runtime. The former simply means that when looking at a piece of code you don't have all the information you need to reason about it. It may be as simple as having to switch to a different source file which might even be one of many possible alternatives; it adds to the cognitive burden and mental book keeping required to read and understand the code.
 <br/>
-The problem is the *lack of locality* in the code. Everything depends on "action at a distance", and a lot of it depends on what happens at runtime. The former simply means that when looking at a piece of code you can't reason completely about it because you don't have all the information you need. Some behaviour is delegated via "On's" or "Do's", which in itself wouldn't be so bad if it wasn't for the fact that you only know *who* will implement them at runtime. Code navigation tools can only suggest where you should look and you often end up firing up the debugger or mentally executing code to determine the exact flow. 
-Objects encapsulate state and this brings with it a lot of extra "setting" and "getting" code to build it up behind the scenes. As our code had evolved many different objects had emerged with their own state and state management. These were often conflated at various points in the code as inputs to some function or method. Tracing the various states back to their origins to etermine where, why, and how they were set up became harder and harder, adding to the difficulty of modifying or repairing older code.
+
+Behaviour is dynamically delegated which in itself wouldn't be so bad if it wasn't for the fact that its harder to know *who* will implement them at runtime. Code navigation tools can only suggest where you should look and you often end up firing up the debugger or mentally executing code to determine the exact flow. 
 <br/>
+
+As our code had evolved many different *objects* had emerged with their own state and state management. These were often conflated at various points in the code as inputs to some function or method, with setters and getters etc. Tracing the various states back to their origins to etermine where, why, and how they were set up became harder and harder, adding to the difficulty of modifying or repairing older code.
+<br/>
+
 Keep in mind that this architecture looked very clean on paper and it's implemented in a few source files and headers. This really shouldn't be a problem yet it managed to become one for all the reasons mentioned above (and probably some others that I've forgotten about.)
 <br/>
+
 The worst consequence of all of this is what happens when someone who has never before seen the code needs to get in there and do something about it. Most code is poorly documented (REF NEEDED, but you know what I mean) but even with the best will in the world it's hard to convey *intent* in code comments and despite what some might claim, code does **not** document itself without considerable effort from the reader. To come in cold looking at a narrow area of code which can not be reasoned about without understanding the whole is a daunting task and as our team grew and people took on tasks in unfamiliar areas of code this problem got worse. 
 The result is exactly what you'd expect; people will create shortcuts and connections where there shouldn't be any, or where a connection already exists but is hard to spot. This is where the spider's web starts to grow and you get duplication of state, stray pointers into all corners of the hierarchy, and outright sabotage of separation of concerns. Because, ultimately, people have a job to do.
 <br/>
