@@ -41,7 +41,15 @@ public:
     bool MyLittleFunction(int);
 };
 ```
-
+In addition to the "cognitive overhead" we've created quite a lot of code to support the *type* ```MySimpleClass``` when perhaps it really just is a logical grouping of functionality. You might consider a singleton for this job, a purely static class of which there is only one but then a namespace (or nothing!) can be just as good an option. Arguably this looks pretty simple, doesn't it?
+```c++
+bool MyLittleFunction(int);
+```
+> A note on singletons<br/>
+> they're marginally useful in cases where you *need* a class (i.e. type) and have to restrict objects of that type to one instance but mostly you probably don't...
+<br/>
+The design principle we adopted in this refactoring exercise was to *strictly limit the use of classes in the public APIs and only if (and only if) they strictly corresponded to a type*. This meant that pretty much *all* classes in the public APIs from the original design disappeared and were replaced with free functions in namespaces.
+  
 ### Stateful pipelines, or high-latency programming
 This reminds me of rendering pipelines in graphics programming where you build up a large amount of state for various stages of a pipeline, then execute the pipeline. In the code case this is where classes contain large amount of state that is set with mutators and this state influences methods executed later. The problem with this 
 
