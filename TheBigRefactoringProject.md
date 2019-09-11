@@ -16,6 +16,11 @@ The architecture had started out with a high degree of flexibility in mind with 
 
 The analysis highlighted a couple of "anti patterns" which were at the root of the problems with the code base:
 
+### Runtime manifest architecture
+This really is at the heart of the problem; the code depended on a number of features (including virtual inheritance) which is *only manifest at runtime*, making static reasoning very hard. Documentation can help and we had made efforts to document code as much as was sensible but it helps not if you effectively have to runtime trace the code by hand as you follow its path. Code that branches off to encapsulated implementations in different source files, virtual inheritance which wreaks havoc with source navigation tools, ```new``` instances of implementations being created and passed around a pointers, etc. 
+<br/>
+The remaining anti patterns are contributing factors to this fundamental problem and so the goal of the refactoring exercise largely became one of making the code *statically comprehensible*.
+
 ### Classes as Namespaces
 This seems fairly common and is a result of the tendency to *default to classes* when designing code in c++. 
 Remember that a ```class``` is a *type* in c++, whereas a ```namespace``` is something you use to group functionality logically. 
@@ -38,7 +43,7 @@ public:
 ```
 
 ### Stateful pipelines, or high-latency programming
-This reminds me of rendering pipelines in graphcis programming where you build up a large amount of state for various stages of a pipeline, then execute the pipeline. In the code case this is where classes contain large amount of state that is set with mutators and this state influences methods executed later.
+This reminds me of rendering pipelines in graphics programming where you build up a large amount of state for various stages of a pipeline, then execute the pipeline. In the code case this is where classes contain large amount of state that is set with mutators and this state influences methods executed later. The problem with this 
 
 ### Deeply nested responsibilities 
 TODO: obfuscated code in deep function hierarchies, helpful "utitlity" classes and functions generalising where it's not needed.
