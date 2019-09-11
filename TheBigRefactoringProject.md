@@ -9,8 +9,44 @@ Transforming a large-ish code base that had been evolving using traditional OO m
 This is *not* an article filled with OO- or C++ -hate speech.
 
 ### The starting point
-We had developed a code base to support a Windows desktop client application. Fundamentally it was a D3D based renderer and a number 
+We had developed a code base to support a Windows desktop client application. Fundamentally it consisted of a number 
 of service layers interacting with remote servers and marshalling information to and from the client PC.
+The architecture had started out with a high degree of flexibility in mind with support for multiple platforms, etc, and had evolved organically. Maintainability and extensibility had clearly suffered but a mentality of "if it isn't broke, don't fix it" had kept it from being properly overhauled until I put on my head phones, rolled up my sleeves, and got to work analysing it and synthesising a cleaner version. 
+<br/>
+
+The analysis highlighted a couple of "anti patterns" which were at the root of the problems with the code base:
+
+### Classes as Namespaces
+This seems fairly common and is a result of the tendency to *default to classes* when designing code in c++. 
+Remember that a ```class``` is a *type* in c++, whereas a ```namespace``` is something you use to group functionality logically. 
+The former is something you can have many of, manifest as objects, the latter is just a handy way of allowing you to name things in better ways. 
+<br/>
+One immediate problem with this is the amount of boiler plate a class often requires which makes the code harder to read, as this simple example illustrates
+```c++
+class MySimpleClass
+{
+public:
+    MySimpleClass();
+    MySimpleClass(const MySimpleClass&);
+    MySimpleClass(MySimpleClass&&);
+    MySimpleClass& operator=(const MySimpleClass&);
+    MySimpleClass& operator=(MySimpleClass&&);
+    ~MySimpleClass();
+    
+    bool MyLittleFunction(int);
+};
+```
+
+### Stateful pipelines, or high-latency programming
+This reminds me of rendering pipelines in graphcis programming where you build up a large amount of state for various stages of a pipeline, then execute the pipeline. In the code case this is where classes contain large amount of state that is set with mutators and this state influences methods executed later.
+
+### Deeply nested responsibilities 
+TODO: obfuscated code in deep function hierarchies, helpful "utitlity" classes and functions generalising where it's not needed.
+
+### Functions as programmes
+TODO: APIs that hide high degrees of complexity, in particular relating to resource management such as threads.
+
+#### TBD
 The architecture lent itself readily to a class hierarchy; there was runtime polymorphism and there was layering of responsibilities.
 A lot of functionality was generic and could be shared between multiple concrete implementations and the natural way to build this was 
 to use a variant of the [template pattern](https://en.wikipedia.org/wiki/Template_method_pattern). This pattern allows us to write "scaffolding" code with embedded points of specialisation that we can delegate to a concrete implementation. It differs from a straight method override approach in that the subclass provides *partial* implementations that the base class injects where it needs it.
